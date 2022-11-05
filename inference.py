@@ -74,8 +74,11 @@ class DiscreteDistribution(dict):
         >>> empty
         {}
         """
-        "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        
+        total = float(self.total())
+        if total != 0:
+            for key in self.keys():
+                self[key] = self[key]/total
 
     def sample(self):
         """
