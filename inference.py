@@ -171,8 +171,19 @@ class InferenceModule:
         """
         Return the probability P(noisyDistance | pacmanPosition, ghostPosition).
         """
-        "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        # So, if the ghost’s position is the jail position, then the observation is None with probability 1, 
+        # and everything else with probability 0. Conversely, if the distance reading is not None, then the ghost 
+        # is in jail with probability 0. If the distance reading is None then the ghost is in jail with probability 1.
+        if noisyDistance == None:
+            return 1 if ghostPosition == jailPosition else 0
+        if ghostPosition == jailPosition:
+            return 0
+        
+        # This distribution is modeled by the function busters.getObservationProbability(noisyDistance, trueDistance), 
+        # which returns P(noisyDistance | trueDistance) and is provided for you. Use this function to help you solve 
+        # the problem. Use the provided manhattanDistance function to find the distance between Pacman’s location 
+        # and the ghost’s location.
+        return busters.getObservationProbability(noisyDistance, manhattanDistance(pacmanPosition, ghostPosition)) 
 
     def setGhostPosition(self, gameState, ghostPosition, index):
         """
