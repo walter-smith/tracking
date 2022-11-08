@@ -101,8 +101,13 @@ class DiscreteDistribution(dict):
         >>> round(samples.count('d') * 1.0/N, 1)
         0.0
         """
-        "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        rand = random.random()
+        total = 0
+
+        for key in self.keys():
+            if rand < self[key] + total:
+                return key
+            total += self[key]
 
 
 class InferenceModule:
@@ -360,8 +365,27 @@ class ParticleFilter(InferenceModule):
         be reinitialized by calling initializeUniformly. The total method of
         the DiscreteDistribution may be useful.
         """
-        "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        ''''''
+        # The sample method of the DiscreteDistribution class will also be useful
+        weightDist = DiscreteDistribution()
+        # Recall that you can obtain Pacman’s position using gameState.getPacmanPosition()
+        pacmanPos = gameState.getPacmanPosition()
+        # and the jail position using self.getJailPosition()
+        jailPos = self.getJailPosition()
+
+        # This method constructs a weight distribution over self.particles where the weight of a particle 
+        # is the probability of the observation given Pacman’s position and that particle location
+        for particle in self.particles:
+            # Reuse the function self.getObservationProb to find the probability of an observation given 
+            # Pacman’s position, a potential ghost position, and the jail position
+            weightDist[particle] += self.getObservationProb(observation, pacmanPos, particle, jailPos)
+
+        # Then, we resample from this weighted distribution to construct our new list of particles.
+        if weightDist.total() == 0:
+            self.initializeUniformly(gameState)
+        else:
+            weightDist.normalize()   
+            self.particles = [weightDist.sample() for _ in self.particles]            
 
     def elapseTime(self, gameState):
         """
@@ -382,6 +406,8 @@ class ParticleFilter(InferenceModule):
         "*** YOUR CODE HERE ***"
         dist = DiscreteDistribution()
         for particle in self.particles:
+            # for initialization, particles should be evenly (not randomly) distributed across
+            # legal positions to ensure a uniform prior.
             dist[particle] += 1
         dist.normalize()
         return dist
