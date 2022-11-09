@@ -444,8 +444,15 @@ class JointParticleFilter(ParticleFilter):
         uniform prior.
         """
         self.particles = []
-        "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+       
+        # You may find the Python itertools package helpful. Look at itertools.product 
+        # to get an implementation of the Cartesian product.
+        # Reuse self.legalPositions to obtain a list of positions a ghost may occupy. 
+        # Recall that the variable you store your particles in must be a list.
+        permutations = list(itertools.product(self.legalPositions, repeat= self.numGhosts))
+        # so must then shuffle the list of permutations to ensure a desirable placement of particles across the board.
+        random.shuffle(permutations)
+        self.particles = permutations
 
     def addGhostAgent(self, agent):
         """
