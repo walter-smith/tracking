@@ -393,7 +393,14 @@ class ParticleFilter(InferenceModule):
         gameState.
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        # This function should construct a new list of particles that corresponds to each existing particle
+        particleList = []
+        # in self.particles advancing a time step,
+        for oldPos in self.particles:
+            newPosDist = self.getPositionDistribution(gameState, oldPos)
+            particleList.append(newPosDist.sample())
+        # and then assign this new list back to self.particles
+        self.particles = particleList
 
     def getBeliefDistribution(self):
         """
