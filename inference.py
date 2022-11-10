@@ -519,7 +519,13 @@ class JointParticleFilter(ParticleFilter):
 
             # now loop through and update each entry in newParticle...
             "*** YOUR CODE HERE ***"
-            raiseNotDefined()
+            
+            # As in the last question, you can loop over the ghosts using:
+            for i in range(self.numGhosts):
+                # Given that i refers to the index of the ghost, to obtain the distributions over new positions 
+                # for that single ghost, and given the list prevGhostPositions of previous positions of all the ghosts, use:
+                newPosDist = self.getPositionDistribution(gameState, newParticle, i, self.ghostAgents[i])
+                newParticle[i] = newPosDist.sample()
 
             """*** END YOUR CODE HERE ***"""
             newParticles.append(tuple(newParticle))
