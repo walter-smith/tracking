@@ -101,14 +101,15 @@ class DiscreteDistribution(dict):
         >>> round(samples.count('d') * 1.0/N, 1)
         0.0
         """
-        rand = random.random()
+
+
+        rand = self.total() * random.random()
         total = 0
 
         for key in self.keys():
             if rand < self[key] + total:
                 return key
             total += self[key]
-
 
 class InferenceModule:
     """
@@ -484,8 +485,28 @@ class JointParticleFilter(ParticleFilter):
         be reinitialized by calling initializeUniformly. The total method of
         the DiscreteDistribution may be useful.
         """
-        "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+
+        # Almost the same as ParticleFilter method
+        weightDist = DiscreteDistribution()
+        pacmanPos = gameState.getPacmanPosition()
+        # Don't need to set jilPos here since we are adding a parameter
+
+        for particle in self.particles:
+            weight = 1
+            # To loop over all the ghosts, use:
+            for i in range(self.numGhosts):
+                # You can still obtain Pacman’s position using gameState.getPacmanPosition(), but to get the jail position 
+                # for a ghost, use self.getJailPosition(i), since now there are multiple ghosts each with their own jail positions.
+                weight *=  self.getObservationProb(observation[i], pacmanPos, particle[i], self.getJailPosition(i))
+            weightDist[particle] += weight
+
+        # Your implementation should also again handle the special case when all particles receive zero weight. 
+        # In this case, self.particles should be recreated from the prior distribution by calling initializeUniformly.
+        if weightDist.total() == 0:
+            self.initializeUniformly(gameState)
+        else:
+            weightDist.normalize()   
+            self.particles = [weightDist.sample() for _ in range(self.numParticles)]
 
     def elapseTime(self, gameState):
         """
